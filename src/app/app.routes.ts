@@ -12,11 +12,11 @@ import {LocalizationForm} from './components/form/localization.form';
 
 export const routes: Routes = [
   {
-    path: '',
+    path: 'admin',
     component: DashboardPage,
   },
   {
-    path: 'facility',
+    path: 'admin/facility',
     children: [
       {
         path: 'localizations',
@@ -57,7 +57,7 @@ export const routes: Routes = [
     ]
   },
   {
-    path: 'payments',
+    path: 'admin/payments',
     children: [
       {
         path: '',
@@ -70,7 +70,7 @@ export const routes: Routes = [
     ]
   },
   {
-    path: 'account',
+    path: 'admin/account',
     children: [
       {
         path: 'update-info',
@@ -87,7 +87,7 @@ export const routes: Routes = [
     ]
   },
   {
-    path: 'settings',
+    path: 'admin/design-page',
     component: DesignPage,
   },
 ];

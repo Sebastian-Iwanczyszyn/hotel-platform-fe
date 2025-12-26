@@ -58,7 +58,7 @@ interface MenuConfig {
             <a mat-list-item
                class="menu-item"
                [class.active]="item.active"
-               [routerLink]="item.path"
+               [routerLink]="['admin/'+item.path]"
                (click)="toggleItem(item)">
               <div class="item-content">
                 <mat-icon class="item-icon">{{ item.icon }}</mat-icon>
@@ -77,7 +77,7 @@ interface MenuConfig {
                   <a mat-list-item
                      class="menu-item submenu-item"
                      [class.active]="child.active"
-                     [routerLink]="child.path">
+                     [routerLink]="['admin/'+child.path]">
                     <div class="item-content">
                       <mat-icon class="item-icon">{{ child.icon }}</mat-icon>
                       <span class="item-label">{{ child.label }}</span>
@@ -277,7 +277,7 @@ export class Menu {
       {
         icon: 'settings',
         label: 'Ustawienia strony rezerwacji',
-        path: '/settings/booking-page'
+        path: '/design-page'
       },
     ],
     bottomItems: [
