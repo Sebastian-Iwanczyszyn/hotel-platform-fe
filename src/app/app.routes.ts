@@ -27,7 +27,7 @@ export const routes: Routes = [
         component: LocalizationForm,
       },
       {
-        path: 'localizations/:id',
+        path: 'localizations/view/:id',
         component: LocalizationForm,
       },
       {
@@ -35,7 +35,7 @@ export const routes: Routes = [
         component: ProductPage,
       },
       {
-        path: 'products/:id',
+        path: 'products/view/:id',
         component: ProductForm,
       },
       {
@@ -51,7 +51,7 @@ export const routes: Routes = [
         component: ProductTypeForm,
       },
       {
-        path: 'product-types/:id',
+        path: 'product-types/view/:id',
         component: ProductTypeForm,
       },
     ]

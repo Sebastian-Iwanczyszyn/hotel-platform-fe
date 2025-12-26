@@ -1,10 +1,11 @@
 import {Component, inject} from '@angular/core';
 import {CommonModule} from '@angular/common';
 import {FormBuilder, ReactiveFormsModule, Validators} from '@angular/forms';
-import {Router} from '@angular/router';
+import {ActivatedRoute, Router} from '@angular/router';
 import {MatFormFieldModule} from '@angular/material/form-field';
 import {MatInputModule} from '@angular/material/input';
 import {FormComponent} from './form-component';
+import {CreateDto, ProductTypeService} from '../../service/product-type.service';
 
 @Component({
   standalone: true,
@@ -48,18 +49,36 @@ import {FormComponent} from './form-component';
 export class ProductTypeForm {
   private fb = inject(FormBuilder);
   private router = inject(Router);
+  private activatedRoute = inject(ActivatedRoute);
+  private service = inject(ProductTypeService);
 
   readonly form = this.fb.group({
     name: ['', Validators.required],
   });
 
+  constructor() {
+    this.activatedRoute.params.subscribe(params => {
+      const id = params['id'];
+
+      if (id) {
+        this.service.getById(id).subscribe(data => {
+          this.form.patchValue({
+            name: data.name,
+          });
+        });
+      }
+    })
+  }
+
   onSubmit(): void {
     if (this.form.invalid) return;
 
-    console.log('Form submitted:', this.form.value);
+    this.service.create(this.form.value as CreateDto).subscribe(res => {
+      this.router.navigate(['/admin/facility/product-types']);
+    });
   }
 
   onCancel(): void {
-    this.router.navigate(['/product-types']);
+    this.router.navigate(['/admin/facility/product-types']);
   }
 }

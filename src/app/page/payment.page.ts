@@ -1,5 +1,5 @@
 import {Component} from '@angular/core';
-import {ColumnDefinition, GenericGrid, PaginationParams} from '../components/generic-grid.';
+import {ColumnDefinition, GenericGrid, Pagination} from '../components/generic-grid.';
 
 @Component({
   standalone: true,
@@ -18,7 +18,7 @@ export class PaymentPage {
     { key: 'name', label: 'Nazwa', type: 'text' },
   ];
 
-  pagination: PaginationParams<any> = {
+  pagination: Pagination<any> = {
     data: [],
     page: 0,
     totalItems: 10,

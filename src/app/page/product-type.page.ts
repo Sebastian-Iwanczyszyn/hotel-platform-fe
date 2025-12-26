@@ -1,6 +1,6 @@
-import {Component, OnInit} from '@angular/core';
-import {ColumnDefinition, GenericGrid, PaginationParams} from '../components/generic-grid.';
-import {LocalizationService} from '../service/localization.service';
+import {Component, inject, signal} from '@angular/core';
+import {ColumnDefinition, GenericGrid, Pagination} from '../components/generic-grid.';
+import {ProductType, ProductTypeService} from '../service/product-type.service';
 
 @Component({
   standalone: true,
@@ -9,20 +9,36 @@ import {LocalizationService} from '../service/localization.service';
   template: `
     <app-generic-grid
       [visibleColumns]="columns"
-      [paginationParams]="pagination"
+      [paginationParams]="pagination()"
+      [deletable]="service"
+      (onDelete)="onDelete()"
     />
   `,
   styles: ``,
 })
 export class ProductTypePage {
+  readonly service = inject(ProductTypeService);
+
   columns: ColumnDefinition[] = [
-    { key: 'name', label: 'Nazwa', type: 'text' },
+    {key: 'name', label: 'Nazwa', type: 'text'},
   ];
 
-  pagination: PaginationParams<any> = {
+  pagination = signal<Pagination<ProductType>>({
     data: [],
     page: 0,
     totalItems: 10,
     totalPages: 0,
-  };
+  });
+
+  constructor() {
+    this.service.list().subscribe(response => {
+      this.pagination.set(response);
+    });
+  }
+
+  onDelete() {
+    this.service.list().subscribe(response => {
+      this.pagination.set(response);
+    });
+  }
 }

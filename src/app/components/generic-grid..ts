@@ -1,7 +1,8 @@
-import {Component, input, computed} from '@angular/core';
+import {Component, input, computed, output} from '@angular/core';
 import {MaterialModule} from '../module/material.module';
 import {CommonModule} from '@angular/common';
 import {RouterLink} from '@angular/router';
+import {GridDeletable} from '../service/grid-deletable';
 
 export interface ColumnDefinition {
   key: string;
@@ -9,7 +10,7 @@ export interface ColumnDefinition {
   type?: 'text' | 'number' | 'date';
 }
 
-export interface PaginationParams<T> {
+export interface Pagination<T> {
   data: T[],
   page: number;
   totalPages: number;
@@ -50,11 +51,11 @@ export interface PaginationParams<T> {
           <td mat-cell *matCellDef="let row" style="text-align: right;">
             @if (isEditable()) {
               <button mat-icon-button>
-                <mat-icon [routerLink]="[row.id]">edit</mat-icon>
+                <mat-icon [routerLink]="['view', row.id]">edit</mat-icon>
               </button>
             }
-            @if (isDeletable()) {
-              <button mat-icon-button>
+            @if (deletable()) {
+              <button (click)="delete(row.id)" mat-icon-button>
                 <mat-icon>delete</mat-icon>
               </button>
             }
@@ -79,17 +80,24 @@ export interface PaginationParams<T> {
 export class GenericGrid {
   visibleColumns = input<ColumnDefinition[]>([]);
   isEditable = input<boolean>(true);
-  isDeletable = input<boolean>(false);
-  paginationParams = input<PaginationParams<any>>({
+  deletable = input<GridDeletable|undefined>(undefined);
+  paginationParams = input<Pagination<any>>({
     data: [],
     page: 0,
     totalPages: 10,
     totalItems: 0
   });
+  onDelete = output<boolean>();
+
+  delete(id: string) {
+    this.deletable()?.delete(id).subscribe(res => {
+      this.onDelete.emit(true);
+    })
+  }
 
   displayedColumns = computed(() => {
     const cols = this.visibleColumns().map(col => col.key);
-    if (this.isEditable() || this.isDeletable()) {
+    if (this.isEditable() || this.deletable()) {
       cols.push('action');
     }
     return cols;

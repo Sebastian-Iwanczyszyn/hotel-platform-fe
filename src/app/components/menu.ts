@@ -253,13 +253,13 @@ export class Menu {
       {icon: 'dashboard', label: 'Dashboard', path: ''},
       {
         icon: 'analytics',
-        label: 'Facility',
+        label: 'Produkty i lokalizacje',
         path: '#',
         active: false,
         children: [
-          {icon: '', label: 'Localizations', path: '/facility/localizations'},
-          {icon: '', label: 'Product Types', path: '/facility/product-types'},
-          {icon: '', label: 'Products', path: '/facility/products'},
+          {icon: '', label: 'Lokalizacje', path: '/facility/localizations'},
+          {icon: '', label: 'Typy produktów', path: '/facility/product-types'},
+          {icon: '', label: 'Produkty', path: '/facility/products'},
         ]
       },
       {

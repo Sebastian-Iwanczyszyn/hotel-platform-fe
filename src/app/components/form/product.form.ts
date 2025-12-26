@@ -1,18 +1,16 @@
-import {Component, inject} from '@angular/core';
+import {Component, inject, signal} from '@angular/core';
 import {CommonModule} from '@angular/common';
-import {FormBuilder, ReactiveFormsModule, Validators} from '@angular/forms';
-import {Router} from '@angular/router';
+import {FormBuilder, FormGroup, ReactiveFormsModule, Validators} from '@angular/forms';
+import {ActivatedRoute, Router} from '@angular/router';
 import {MatFormFieldModule} from '@angular/material/form-field';
 import {MatInputModule} from '@angular/material/input';
 import {MatSelectModule} from '@angular/material/select';
 import {FormComponent} from './form-component';
 import {UploadFile} from '../upload-file';
-
-enum Visibility {
-  PUBLISHED = 'PUBLISHED',
-  DRAFT = 'DRAFT',
-  ARCHIVED = 'ARCHIVED'
-}
+import {Localization, LocalizationService} from '../../service/localization.service';
+import {ProductType, ProductTypeService} from '../../service/product-type.service';
+import {CreateDto, ProductService, UpdateDto, Visibility} from '../../service/product.service';
+import {ViewUploaded} from '../../model/upload';
 
 @Component({
   standalone: true,
@@ -44,7 +42,7 @@ enum Visibility {
 
         <mat-form-field appearance="outline" class="full-width">
           <mat-label>Original Price</mat-label>
-          <input matInput type="number" formControlName="originalPrice" placeholder="0.00"/>
+          <input matInput type="text" formControlName="originalPrice" placeholder="0.00"/>
           @if (form.get('originalPrice')?.hasError('required') && form.get('originalPrice')?.touched) {
             <mat-error>Original price is required</mat-error>
           }
@@ -59,7 +57,7 @@ enum Visibility {
           <mat-label>Localization</mat-label>
           <mat-select formControlName="localizationId">
             <mat-option value="">Select localization</mat-option>
-            @for (loc of localizations; track loc.id) {
+            @for (loc of localizations(); track loc.id) {
               <mat-option [value]="loc.id">{{ loc.name }}</mat-option>
             }
           </mat-select>
@@ -72,7 +70,7 @@ enum Visibility {
           <mat-label>Product Type</mat-label>
           <mat-select formControlName="productTypeId">
             <mat-option value="">Select product type</mat-option>
-            @for (type of productTypes; track type.id) {
+            @for (type of productTypes(); track type.id) {
               <mat-option [value]="type.id">{{ type.name }}</mat-option>
             }
           </mat-select>
@@ -101,13 +99,8 @@ enum Visibility {
           </mat-select>
         </mat-form-field>
 
-        <mat-form-field appearance="outline" class="full-width">
-          <mat-label>Image ID</mat-label>
-          <input matInput formControlName="imageId" placeholder="Optional image ID"/>
-        </mat-form-field>
-
         <div class="py-5">
-          <upload-file></upload-file>
+          <upload-file [viewUploaded]="viewUploaded" (uploaded)="onUpload($event)"></upload-file>
         </div>
       </form>
     </form-component>
@@ -126,10 +119,16 @@ enum Visibility {
 export class ProductForm {
   private fb = inject(FormBuilder);
   private router = inject(Router);
+  private localizationService = inject(LocalizationService);
+  private productTypesService = inject(ProductTypeService);
+  private productService = inject(ProductService);
+  private activatedRoute = inject(ActivatedRoute);
+  private id: string|undefined = undefined;
+  viewUploaded: ViewUploaded|null = null;
 
-  readonly form = this.fb.group({
+  readonly form: FormGroup = this.fb.group({
     name: ['', Validators.required],
-    originalPrice: ['', Validators.required],
+    originalPrice: [0, Validators.required],
     salePrice: [null],
     localizationId: [null, Validators.required],
     productTypeId: [null, Validators.required],
@@ -144,29 +143,73 @@ export class ProductForm {
     {value: Visibility.ARCHIVED, label: 'Archived'}
   ];
 
-  localizations = [
-    {id: '1', name: 'Location 1'},
-    {id: '2', name: 'Location 2'}
-  ];
+  localizations = signal<Localization[]>([]);
+  productTypes = signal<ProductType[]>([]);
 
-  productTypes = [
-    {id: '1', name: 'Type 1'},
-    {id: '2', name: 'Type 2'}
-  ];
+  constructor() {
+    this.localizationService.list().subscribe(result => {
+      this.localizations.set(result.data);
+    });
+
+    this.productTypesService.list().subscribe(result => {
+      this.productTypes.set(result.data);
+    });
+
+    this.activatedRoute.params.subscribe(params => {
+      const id = params['id'];
+
+      if (id) {
+        this.id = id;
+        this.productService.getById(id).subscribe(data => {
+          this.form.patchValue({
+            name: data.name,
+            originalPrice: data.originalPrice,
+            salePrice: data.salePrice,
+            localizationId: data.localization.id,
+            productTypeId: data.type,
+            imageId: data.viewUploaded?.id,
+            quantity: data.quantity,
+            visibility: data.visibility,
+          });
+          this.viewUploaded = data.viewUploaded;
+        });
+      }
+    })
+  }
+
+  onUpload(event: string|null) {
+    this.form.patchValue({ imageId: event });
+  }
 
   onSubmit(): void {
     if (this.form.invalid) return;
 
-    const formData = {
-      ...this.form.value,
-      originalPrice: parseFloat(this.form.value.originalPrice!),
-      salePrice: this.form.value.salePrice ? parseFloat(this.form.value.salePrice) : null,
-      quantity: this.form.value.quantity,
+    const formValue = this.form.value;
+
+    const formData: CreateDto|UpdateDto = {
+      name: formValue.name,
+      originalPrice: formValue.originalPrice,
+      salePrice: formValue.salePrice,
+      localizationId: formValue.localizationId,
+      productTypeId: formValue.productTypeId,
+      imageId: formValue.imageId || null,
+      quantity: formValue.quantity,
+      visibility: formValue.visibility,
     };
-    console.log('Form submitted:', formData);
+
+    if (this.id) {
+      this.productService.update(this.id, formData as UpdateDto).subscribe(() => {
+        this.router.navigate(['/admin/facility/products']);
+      });
+      return;
+    }
+
+    this.productService.create(formData as CreateDto).subscribe(() => {
+      this.router.navigate(['/admin/facility/products']);
+    });
   }
 
   onCancel(): void {
-    this.router.navigate(['/products']);
+    this.router.navigate(['/admin/facility/products']);
   }
 }

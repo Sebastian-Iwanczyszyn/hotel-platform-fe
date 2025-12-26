@@ -1,7 +1,7 @@
 import {Component, inject} from '@angular/core';
 import {CommonModule} from '@angular/common';
 import {FormBuilder, ReactiveFormsModule, Validators} from '@angular/forms';
-import {Router} from '@angular/router';
+import {ActivatedRoute, Router} from '@angular/router';
 import {MatFormFieldModule} from '@angular/material/form-field';
 import {MatInputModule} from '@angular/material/input';
 import {FormComponent} from './form-component';
@@ -66,12 +66,27 @@ export class LocalizationForm {
   private fb = inject(FormBuilder);
   private router = inject(Router);
   private service = inject(LocalizationService);
+  private activatedRoute = inject(ActivatedRoute);
 
   readonly form = this.fb.group({
     name: ['', Validators.required],
     checkIn: ['14:00', Validators.required],
     checkOut: ['11:00', Validators.required],
   });
+
+  constructor() {
+    this.activatedRoute.params.subscribe(params => {
+      const id = params['id'];
+
+      if (id) {
+        this.service.getById(id).subscribe(data => {
+          this.form.patchValue({
+            name: data.name,
+          });
+        });
+      }
+    })
+  }
 
   onSubmit(): void {
     if (this.form.invalid) return;

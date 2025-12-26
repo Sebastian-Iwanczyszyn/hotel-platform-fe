@@ -2,19 +2,13 @@ import { Injectable } from '@angular/core';
 import { HttpClient, HttpParams } from '@angular/common/http';
 import { Observable } from 'rxjs';
 import { environment } from '../../environments/environment';
+import {Pagination} from '../components/generic-grid.';
+import {GridDeletable} from './grid-deletable';
 
 export interface Localization {
   id: string;
   name: string;
   address?: string;
-}
-
-export interface Pagination<T> {
-  data: T[];
-  totalItems: number;
-  page: number;
-  limit: number;
-  totalPages: number;
 }
 
 export interface CreateLocalizationDto {
@@ -28,7 +22,7 @@ export interface UpdateLocalizationDto {
 @Injectable({
   providedIn: 'root',
 })
-export class LocalizationService {
+export class LocalizationService implements GridDeletable {
   private readonly apiUrl = `${environment.API_URL}/admin/localizations`;
 
   constructor(private http: HttpClient) {}
