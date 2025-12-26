@@ -9,10 +9,11 @@ export interface ColumnDefinition {
   type?: 'text' | 'number' | 'date';
 }
 
-export interface PaginationParams {
-  pageIndex: number;
-  pageSize: number;
-  length: number;
+export interface PaginationParams<T> {
+  data: T[],
+  page: number;
+  totalPages: number;
+  totalItems: number;
 }
 
 @Component({
@@ -36,7 +37,7 @@ export interface PaginationParams {
           </div>
         </div>
       </div>
-      <table mat-table [dataSource]="data()">
+      <table mat-table [dataSource]="paginationParams().data">
         @for (column of visibleColumns(); track column.key) {
           <ng-container [matColumnDef]="column.key">
             <th mat-header-cell *matHeaderCellDef>{{ column.label }}</th>
@@ -65,9 +66,9 @@ export interface PaginationParams {
       </table>
 
       <mat-paginator
-          [pageIndex]="paginationParams().pageIndex"
-          [pageSize]="paginationParams().pageSize"
-          [length]="paginationParams().length"
+          [pageIndex]="paginationParams().page"
+          [pageSize]="paginationParams().totalPages"
+          [length]="paginationParams().totalItems"
           [pageSizeOptions]="[5, 10, 25, 50]"
           showFirstLastButtons
       >
@@ -77,13 +78,13 @@ export interface PaginationParams {
 })
 export class GenericGrid {
   visibleColumns = input<ColumnDefinition[]>([]);
-  data = input<any[]>([]);
   isEditable = input<boolean>(true);
   isDeletable = input<boolean>(false);
-  paginationParams = input<PaginationParams>({
-    pageIndex: 0,
-    pageSize: 10,
-    length: 0
+  paginationParams = input<PaginationParams<any>>({
+    data: [],
+    page: 0,
+    totalPages: 10,
+    totalItems: 0
   });
 
   displayedColumns = computed(() => {

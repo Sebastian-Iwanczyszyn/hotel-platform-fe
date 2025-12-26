@@ -5,6 +5,7 @@ import {MatListModule} from '@angular/material/list';
 import {MatIconModule} from '@angular/material/icon';
 import {MatButtonModule} from '@angular/material/button';
 import {CommonModule} from '@angular/common';
+import {keycloak} from '../keycloak';
 
 interface MenuItem {
   icon: string;
@@ -101,16 +102,14 @@ interface MenuConfig {
       </mat-nav-list>
 
       <mat-nav-list class="menu-list-bottom">
-        @for (item of menuConfig.bottomItems; track item.label) {
-          <a mat-list-item
-             class="menu-item"
-             [routerLink]="[item.path]">
-            <div class="item-content">
-              <mat-icon class="item-icon">{{ item.icon }}</mat-icon>
-              <span class="item-label">{{ item.label }}</span>
-            </div>
-          </a>
-        }
+        <a mat-list-item
+           (click)="logout()"
+           class="menu-item">
+          <div class="item-content">
+            <mat-icon class="item-icon">sign-out</mat-icon>
+            <span class="item-label">Wyloguj</span>
+          </div>
+        </a>
       </mat-nav-list>
     </div>
   `,
@@ -302,6 +301,10 @@ export class Menu {
   };
 
   constructor(private router: Router) {
+  }
+
+  async logout(): Promise<void> {
+    await keycloak.logout();
   }
 
   toggleItem(item: MenuItem): void {

@@ -77,12 +77,11 @@ export class LocalizationForm {
     if (this.form.invalid) return;
 
     this.service.create(this.form.value as CreateLocalizationDto).subscribe(result => {
-      console.log(result);
-      this.router.navigate(['/localizations']);
+      this.router.navigate(['/admin/localizations']);
     })
   }
 
   onCancel(): void {
-    this.router.navigate(['/localizations']);
+    this.router.navigate(['/admin/localizations']);
   }
 }

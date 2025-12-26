@@ -1,4 +1,5 @@
-import {Component, OnInit} from '@angular/core';
+import {Component, signal, inject} from '@angular/core';
+import {toSignal} from '@angular/core/rxjs-interop';
 import {ColumnDefinition, GenericGrid, PaginationParams} from '../components/generic-grid.';
 import {Localization, LocalizationService} from '../service/localization.service';
 
@@ -9,32 +10,28 @@ import {Localization, LocalizationService} from '../service/localization.service
   template: `
     <app-generic-grid
       [visibleColumns]="columns"
-      [data]="data"
-      [paginationParams]="pagination"
+      [paginationParams]="pagination()"
     />
   `,
   styles: ``,
 })
-export class LocalizationPage implements OnInit {
+export class LocalizationPage {
+  private readonly service = inject(LocalizationService);
+
   columns: ColumnDefinition[] = [
-    { key: 'name', label: 'Nazwa', type: 'text' },
+    {key: 'name', label: 'Nazwa', type: 'text'},
   ];
 
-  data: Localization[] = [];
+  pagination = signal<PaginationParams<Localization>>({
+    data: [],
+    page: 0,
+    totalItems: 10,
+    totalPages: 0,
+  });
 
-  pagination: PaginationParams = {
-    pageIndex: 0,
-    pageSize: 10,
-    length: this.data.length
-  };
-
-  constructor(private readonly service: LocalizationService) {
-  }
-
-  ngOnInit(): void {
+  constructor() {
     this.service.list().subscribe(response => {
-      this.data = response.data;
-      this.pagination.length = response.total;
-    })
+      this.pagination.set(response);
+    });
   }
 }

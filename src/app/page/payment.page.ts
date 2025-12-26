@@ -1,6 +1,5 @@
-import {Component, OnInit} from '@angular/core';
+import {Component} from '@angular/core';
 import {ColumnDefinition, GenericGrid, PaginationParams} from '../components/generic-grid.';
-import {LocalizationService} from '../service/localization.service';
 
 @Component({
   standalone: true,
@@ -9,31 +8,21 @@ import {LocalizationService} from '../service/localization.service';
   template: `
     <app-generic-grid
       [visibleColumns]="columns"
-      [data]="data"
       [paginationParams]="pagination"
     />
   `,
   styles: ``,
 })
-export class PaymentPage implements OnInit {
+export class PaymentPage {
   columns: ColumnDefinition[] = [
     { key: 'name', label: 'Nazwa', type: 'text' },
   ];
 
-  data = [
-    { id: 1, name: 'Example 1' },
-    { id: 2, name: 'Example 2' },
-  ];
-
-  pagination: PaginationParams = {
-    pageIndex: 0,
-    pageSize: 10,
-    length: this.data.length
+  pagination: PaginationParams<any> = {
+    data: [],
+    page: 0,
+    totalItems: 10,
+    totalPages: 0,
   };
-
-  constructor(private readonly service: LocalizationService) {
-  }
-
-  ngOnInit(): void {
-  }
 }
+
