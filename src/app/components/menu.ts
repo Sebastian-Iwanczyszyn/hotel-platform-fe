@@ -55,21 +55,31 @@ interface MenuConfig {
       <mat-nav-list class="menu-list">
         @for (item of menuConfig.mainItems; track item.label) {
           <div class="menu-item-wrapper">
-            <a mat-list-item
-               class="menu-item"
-               [class.active]="item.active"
-               [routerLink]="['admin/'+item.path]"
-               (click)="toggleItem(item)">
-              <div class="item-content">
-                <mat-icon class="item-icon">{{ item.icon }}</mat-icon>
-                <span class="item-label">{{ item.label }}</span>
-              </div>
-              @if (item.children) {
+            @if (item.children) {
+              <a mat-list-item
+                 class="menu-item"
+                 [class.active]="item.active"
+                 (click)="toggleItem(item); $event.preventDefault()"
+                 style="cursor: pointer;">
+                <div class="item-content">
+                  <mat-icon class="item-icon">{{ item.icon }}</mat-icon>
+                  <span class="item-label">{{ item.label }}</span>
+                </div>
                 <mat-icon class="expand-icon">
                   {{ item.expanded ? 'expand_less' : 'expand_more' }}
                 </mat-icon>
-              }
-            </a>
+              </a>
+            } @else {
+              <a mat-list-item
+                 class="menu-item"
+                 [class.active]="item.active"
+                 [routerLink]="['/admin'+item.path]">
+                <div class="item-content">
+                  <mat-icon class="item-icon">{{ item.icon }}</mat-icon>
+                  <span class="item-label">{{ item.label }}</span>
+                </div>
+              </a>
+            }
 
             @if (item.children && item.expanded) {
               <div class="submenu">
@@ -77,7 +87,7 @@ interface MenuConfig {
                   <a mat-list-item
                      class="menu-item submenu-item"
                      [class.active]="child.active"
-                     [routerLink]="['admin/'+child.path]">
+                     [routerLink]="['/admin'+child.path]">
                     <div class="item-content">
                       <mat-icon class="item-icon">{{ child.icon }}</mat-icon>
                       <span class="item-label">{{ child.label }}</span>
@@ -94,7 +104,7 @@ interface MenuConfig {
         @for (item of menuConfig.bottomItems; track item.label) {
           <a mat-list-item
              class="menu-item"
-             [routerLink]="item.path">
+             [routerLink]="[item.path]">
             <div class="item-content">
               <mat-icon class="item-icon">{{ item.icon }}</mat-icon>
               <span class="item-label">{{ item.label }}</span>
