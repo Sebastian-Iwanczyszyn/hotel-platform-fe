@@ -16,6 +16,7 @@ export interface PaymentProvider<T> {
   configuration: T;
   createdAt: string;
   updatedAt: string;
+  active: boolean;
 }
 
 export interface CreatePaymentProviderDto {
@@ -27,14 +28,18 @@ export interface UpdatePaymentProviderDto {
   configuration?: any;
 }
 
-export interface BankTransferConfiguration {
+export interface Configuration {
+  id: string | null;
+}
+
+export interface BankTransferConfiguration extends Configuration {
   iban: string;
   accountHolderName: string;
   address: string;
   bankName: string | null;
 }
 
-export interface PayUConfiguration {
+export interface PayUConfiguration extends Configuration {
   merchant_pos_id: string;
   client_id: string;
   client_secret: string;

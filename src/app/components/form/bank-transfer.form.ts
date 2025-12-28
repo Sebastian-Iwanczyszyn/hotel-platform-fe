@@ -1,16 +1,12 @@
 import {Component, inject} from '@angular/core';
 import {CommonModule} from '@angular/common';
-import {FormBuilder, ReactiveFormsModule, Validators} from '@angular/forms';
-import {Router} from '@angular/router';
+import {FormBuilder, FormGroup, ReactiveFormsModule, Validators} from '@angular/forms';
 import {MatFormFieldModule} from '@angular/material/form-field';
 import {MatInputModule} from '@angular/material/input';
 import {FormComponent} from './form-component';
-import {
-  BankTransferConfiguration,
-  CreatePaymentProviderDto,
-  PaymentProviderType,
-  PaymentService
-} from '../../service/payment.service';
+import {BankTransferConfiguration, PaymentProvider, PaymentProviderType} from '../../service/payment.service';
+import {PaymentForm} from './payment.form';
+import {MatSlideToggle} from '@angular/material/slide-toggle';
 
 @Component({
   standalone: true,
@@ -21,6 +17,7 @@ import {
     MatFormFieldModule,
     MatInputModule,
     FormComponent,
+    MatSlideToggle,
   ],
   template: `
     <form-component
@@ -59,6 +56,10 @@ import {
           <mat-label>Nazwa banku (opcjonalne)</mat-label>
           <input matInput formControlName="bankName" placeholder="PKO Bank Polski"/>
         </mat-form-field>
+
+        <mat-slide-toggle formControlName="active" color="primary">
+          Aktywna
+        </mat-slide-toggle>
       </form>
     </form-component>
   `,
@@ -74,52 +75,31 @@ import {
     }
   `,
 })
-export class BankTransferForm {
+export class BankTransferForm extends PaymentForm<BankTransferConfiguration> {
   private fb = inject(FormBuilder);
-  private router = inject(Router);
-  private service = inject(PaymentService);
-  private id: string | undefined;
-
-  readonly form = this.fb.group({
-    iban: ['', Validators.required],
-    accountHolderName: ['', Validators.required],
-    address: ['', Validators.required],
-    bankName: ['', Validators.required],
-  });
 
   constructor() {
-    this.service.getByType<BankTransferConfiguration>(PaymentProviderType.BANK_TRANSFER).subscribe(response => {
-      const data = response.configuration;
-      this.id = response.id;
-      this.form.patchValue({
-        iban: data.iban,
-        accountHolderName: data.accountHolderName,
-        address: data.address,
-        bankName: data.bankName,
-      });
+    super(PaymentProviderType.BANK_TRANSFER);
+  }
+
+  protected creteForm(): FormGroup {
+    return this.fb.group({
+      iban: ['', Validators.required],
+      accountHolderName: ['', Validators.required],
+      address: ['', Validators.required],
+      bankName: ['', Validators.required],
+      active: [false, Validators.required],
     });
   }
 
-  onSubmit(): void {
-    if (this.form.invalid) return;
-    const data: CreatePaymentProviderDto = {
-      configuration: this.form.value,
-      type: PaymentProviderType.BANK_TRANSFER,
-      active: false,
-    } as CreatePaymentProviderDto;
-
-    if (this.id) {
-      this.service.update<BankTransferConfiguration>(this.id, data).subscribe(result => {
-        console.log(result);
-      });
-      return;
-    }
-
-    this.service.create(data).subscribe(result => {
+  protected patchForm(response: PaymentProvider<BankTransferConfiguration>): void {
+    const data = response.configuration;
+    this.form.patchValue({
+      iban: data.iban,
+      accountHolderName: data.accountHolderName,
+      address: data.address,
+      bankName: data.bankName,
+      active: response.active,
     });
-  }
-
-  onCancel(): void {
-    this.router.navigate(['/admin/payments']);
   }
 }

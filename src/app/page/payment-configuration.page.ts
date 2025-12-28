@@ -1,7 +1,13 @@
-import {Component} from '@angular/core';
+import {Component, inject} from '@angular/core';
 import {MatTabsModule} from '@angular/material/tabs';
 import {BankTransferForm} from '../components/form/bank-transfer.form';
 import {PayUForm} from '../components/form/payu.form';
+import {
+  BankTransferConfiguration,
+  CreatePaymentProviderDto,
+  PaymentService,
+} from '../service/payment.service';
+import {PaymentConfigurationSubmitted} from '../model/payment';
 
 @Component({
   standalone: true,
@@ -11,13 +17,13 @@ import {PayUForm} from '../components/form/payu.form';
     <mat-tab-group [(selectedIndex)]="activeTab" (selectedTabChange)="onTabChange($event.index)">
       <mat-tab label="Przelew bankowy">
         <div class="tab-content">
-            <bank-transfer-form></bank-transfer-form>
+            <bank-transfer-form (submit)="submit($event)"></bank-transfer-form>
         </div>
       </mat-tab>
 
       <mat-tab label="PayU">
         <div class="tab-content">
-            <payu-form></payu-form>
+            <payu-form (submit)="submit($event)"></payu-form>
         </div>
       </mat-tab>
 
@@ -42,16 +48,30 @@ import {PayUForm} from '../components/form/payu.form';
 })
 export class PaymentConfigurationPage {
   activeTab = 0;
+  private service = inject(PaymentService);
 
   onTabChange(index: number) {
-    console.log('Selected tab:', index);
-    // Tutaj możesz załadować dane dla konkretnej metody płatności
     this.loadDataForPaymentMethod(index);
   }
 
+  submit(event: PaymentConfigurationSubmitted) {
+    const data: CreatePaymentProviderDto = {
+      configuration: event.configuration,
+      type: event.type,
+      active: event.active,
+    } as CreatePaymentProviderDto;
+
+    if (event.id) {
+      this.service.update<BankTransferConfiguration>(event.id, data).subscribe(result => {
+      });
+      return;
+    }
+
+    this.service.create(data).subscribe(result => {
+    });
+  }
+
   private loadDataForPaymentMethod(index: number) {
-    // Implementacja ładowania danych dla wybranej zakładki
     const methods = ['bank-transfer', 'payu', 'tpay', 'paypal'];
-    console.log(`Loading data for: ${methods[index]}`);
   }
 }
