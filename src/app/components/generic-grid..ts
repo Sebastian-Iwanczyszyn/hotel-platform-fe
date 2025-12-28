@@ -31,10 +31,12 @@ export interface Pagination<T> {
       <div class="row">
         <div class="col">
           <div class="d-flex justify-content-end p-3">
-            <button [routerLink]="'create'" mat-raised-button>
-              <mat-icon>add</mat-icon>
-              Dodaj
-            </button>
+            @if (createButton()) {
+              <button [routerLink]="'create'" mat-raised-button>
+                <mat-icon>add</mat-icon>
+                Dodaj
+              </button>
+            }
           </div>
         </div>
       </div>
@@ -81,6 +83,7 @@ export class GenericGrid {
   visibleColumns = input<ColumnDefinition[]>([]);
   isEditable = input<boolean>(true);
   deletable = input<GridDeletable|undefined>(undefined);
+  createButton = input<boolean>(true);
   paginationParams = input<Pagination<any>>({
     data: [],
     page: 0,

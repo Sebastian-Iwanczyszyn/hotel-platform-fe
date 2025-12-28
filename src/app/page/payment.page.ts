@@ -9,6 +9,7 @@ import {ColumnDefinition, GenericGrid, Pagination} from '../components/generic-g
     <app-generic-grid
       [visibleColumns]="columns"
       [paginationParams]="pagination"
+      [createButton]="false"
     />
   `,
   styles: ``,
