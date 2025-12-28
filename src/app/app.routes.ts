@@ -6,9 +6,9 @@ import {ProductForm} from './components/form/product.form';
 import {ProductTypePage} from './page/product-type.page';
 import {ProductPage} from './page/product.page';
 import {PaymentPage} from './page/payment.page';
-import {PaymentConfigurationPage} from './page/payment-configuration.page';
 import {DesignPage} from './page/design.page';
 import {LocalizationForm} from './components/form/localization.form';
+import {PaymentConfigurationPage} from './page/payment-configuration.page';
 
 export const routes: Routes = [
   {

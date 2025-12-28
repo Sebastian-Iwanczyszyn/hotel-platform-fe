@@ -5,8 +5,6 @@ import {MatFormFieldModule} from '@angular/material/form-field';
 import {MatInputModule} from '@angular/material/input';
 import {MatButtonModule} from '@angular/material/button';
 import {MatCardModule} from '@angular/material/card';
-import {toSignal} from '@angular/core/rxjs-interop';
-import {map, startWith} from 'rxjs';
 
 @Component({
   standalone: true,
@@ -22,7 +20,7 @@ import {map, startWith} from 'rxjs';
   template: `
     <mat-card class="form-card">
       <mat-card-header>
-        <mat-card-title>{{ title() }}</mat-card-title>
+        <mat-card-title class="mb-4">{{ title() }}</mat-card-title>
       </mat-card-header>
 
       <mat-card-content>
@@ -44,14 +42,18 @@ import {map, startWith} from 'rxjs';
       </mat-card-content>
     </mat-card>
   `,
-  styles: ``,
+  styles: `
+    .form-card {
+      background-color: #FFF;
+    }
+  `,
 })
 export class FormComponent {
   // signal inputs
   title = input.required<string>();
   form = input.required<FormGroup>();
-  saveText = input('Save');
-  cancelText = input('Cancel');
+  saveText = input('Zapisz');
+  cancelText = input('Anuluj');
 
   // signal outputs
   save = output<void>();
