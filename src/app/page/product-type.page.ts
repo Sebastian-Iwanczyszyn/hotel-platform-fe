@@ -1,5 +1,5 @@
 import {Component, inject, signal} from '@angular/core';
-import {ColumnDefinition, GenericGrid, Pagination} from '../components/generic-grid.';
+import {ColumnDefinition, defaultPagination, GenericGrid, Pagination} from '../components/generic-grid.';
 import {ProductType, ProductTypeService} from '../service/product-type.service';
 
 @Component({
@@ -8,6 +8,8 @@ import {ProductType, ProductTypeService} from '../service/product-type.service';
   imports: [GenericGrid],
   template: `
     <app-generic-grid
+      title="Typy produktów"
+      subtitle="Lista wszystkich typów produktów (np. apartament, pokój, domek, itp.)"
       [visibleColumns]="columns"
       [paginationParams]="pagination()"
       [deletable]="service"
@@ -23,12 +25,7 @@ export class ProductTypePage {
     {key: 'name', label: 'Nazwa', type: 'text'},
   ];
 
-  pagination = signal<Pagination<ProductType>>({
-    data: [],
-    page: 0,
-    totalItems: 10,
-    totalPages: 0,
-  });
+  pagination = signal<Pagination<ProductType>>(defaultPagination);
 
   constructor() {
     this.service.list().subscribe(response => {

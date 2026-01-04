@@ -1,5 +1,5 @@
 import {Component, signal, inject} from '@angular/core';
-import {ColumnDefinition, GenericGrid, Pagination} from '../components/generic-grid.';
+import {ColumnDefinition, defaultPagination, GenericGrid, Pagination} from '../components/generic-grid.';
 import {Localization, LocalizationService} from '../service/localization.service';
 
 @Component({
@@ -8,6 +8,8 @@ import {Localization, LocalizationService} from '../service/localization.service
   imports: [GenericGrid],
   template: `
     <app-generic-grid
+      title="Lokaliacje"
+      subtitle="Lista wszystkich lokalizacji, w których oferujesz swoje produkty"
       [visibleColumns]="columns"
       [paginationParams]="pagination()"
       [deletable]="service"
@@ -23,12 +25,7 @@ export class LocalizationPage {
     {key: 'name', label: 'Nazwa', type: 'text'},
   ];
 
-  pagination = signal<Pagination<Localization>>({
-    data: [],
-    page: 0,
-    totalItems: 10,
-    totalPages: 0,
-  });
+  pagination = signal<Pagination<Localization>>(defaultPagination);
 
   constructor() {
     this.service.list().subscribe(response => {

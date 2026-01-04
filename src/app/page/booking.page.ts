@@ -1,5 +1,5 @@
 import {Component, signal, inject} from '@angular/core';
-import {ColumnDefinition, GenericGrid, Pagination} from '../components/generic-grid.';
+import {ColumnDefinition, defaultPagination, GenericGrid, Pagination} from '../components/generic-grid.';
 import {Booking, BookingService} from '../service/booking.service';
 
 @Component({
@@ -8,9 +8,12 @@ import {Booking, BookingService} from '../service/booking.service';
   imports: [GenericGrid],
   template: `
     <app-generic-grid
+      title="Rezerwacje"
+      subtitle="Lista wszystkich rezerwacji dokonanych przez Twoich gości"
       [visibleColumns]="columns"
       [paginationParams]="pagination()"
       [isEditable]="false"
+      (pageChange)="pageChange($event)"
     />
   `,
   styles: ``,
@@ -29,15 +32,18 @@ export class BookingPage {
     {key: 'nights', label: 'Ilość noclegów', type: 'text'},
   ];
 
-  pagination = signal<Pagination<Booking>>({
-    data: [],
-    page: 0,
-    totalItems: 10,
-    totalPages: 0,
-  });
+  pagination = signal<Pagination<Booking>>(defaultPagination);
 
   constructor() {
-    this.service.list().subscribe(response => {
+    this.loadData();
+  }
+
+  pageChange(event: any) {
+    this.loadData(event.page, event.limit);
+  }
+
+  loadData(page: number = 1, limit: number = 25) {
+    this.service.list(page, limit).subscribe(response => {
       this.pagination.set(response);
     });
   }

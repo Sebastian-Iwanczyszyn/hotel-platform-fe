@@ -1,7 +1,7 @@
 import {Component, OnInit, signal, computed} from '@angular/core';
 import {CommonModule} from '@angular/common';
-import {MaterialModule} from '../module/material.module';
-import {Localization, LocalizationService} from '../service/localization.service';
+import {MaterialModule} from '../../module/material.module';
+import {Localization, LocalizationService} from '../../service/localization.service';
 
 @Component({
   standalone: true,

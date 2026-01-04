@@ -1,5 +1,5 @@
 import {Component, inject, signal} from '@angular/core';
-import {ColumnDefinition, GenericGrid, Pagination} from '../components/generic-grid.';
+import {ColumnDefinition, defaultPagination, GenericGrid, Pagination} from '../components/generic-grid.';
 import {PaymentService} from '../service/payment.service';
 import {Order} from '../model/payment-service';
 import {OrderForm} from '../components/form/order-form';
@@ -10,6 +10,8 @@ import {OrderForm} from '../components/form/order-form';
   imports: [GenericGrid],
   template: `
     <app-generic-grid
+      title="Zamówienia"
+      subtitle="Lista wszystkich zamówień powiązanych z Twoimi rezerwacjami (podgląd)"
       [visibleColumns]="columns"
       [paginationParams]="pagination()"
       [createButton]="false"
@@ -30,12 +32,7 @@ export class PaymentPage {
     {key: 'createdAt', label: 'Data stworzenia', type: 'text'},
   ];
 
-  pagination = signal<Pagination<Order>>({
-    data: [],
-    page: 0,
-    totalItems: 10,
-    totalPages: 0,
-  });
+  pagination = signal<Pagination<Order>>(defaultPagination);
 
   constructor() {
     this.service.list().subscribe(response => {
