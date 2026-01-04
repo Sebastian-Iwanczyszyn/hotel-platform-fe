@@ -2,15 +2,13 @@ import {Component, inject, signal} from '@angular/core';
 import {CommonModule} from '@angular/common';
 import {FormBuilder, FormGroup, ReactiveFormsModule, Validators} from '@angular/forms';
 import {ActivatedRoute, Router} from '@angular/router';
-import {MatFormFieldModule} from '@angular/material/form-field';
-import {MatInputModule} from '@angular/material/input';
-import {MatSelectModule} from '@angular/material/select';
 import {FormComponent} from './form-component';
 import {UploadFile} from '../upload-file';
 import {Localization, LocalizationService} from '../../service/localization.service';
 import {ProductType, ProductTypeService} from '../../service/product-type.service';
 import {CreateDto, ProductService, UpdateDto, Visibility} from '../../service/product.service';
 import {ViewUploaded} from '../../model/upload';
+import {MaterialModule} from '../../module/material.module';
 
 @Component({
   standalone: true,
@@ -18,11 +16,9 @@ import {ViewUploaded} from '../../model/upload';
   imports: [
     CommonModule,
     ReactiveFormsModule,
-    MatFormFieldModule,
-    MatInputModule,
-    MatSelectModule,
     FormComponent,
     UploadFile,
+    MaterialModule,
   ],
   template: `
     <form-component
@@ -31,78 +27,102 @@ import {ViewUploaded} from '../../model/upload';
       (save)="onSubmit()"
       (cancel)="onCancel()"
     >
-      <form [formGroup]="form" class="form">
-        <mat-form-field appearance="outline" class="full-width">
-          <mat-label>Name</mat-label>
-          <input matInput formControlName="name" placeholder="Enter product name"/>
-          @if (form.get('name')?.hasError('required') && form.get('name')?.touched) {
-            <mat-error>Name is required</mat-error>
-          }
-        </mat-form-field>
+      <div class="row p-3">
+        <div class="col-6">
+          <div class="row">
+            <mat-card class="form-card p-2">
+              <mat-card-content>
+                <form [formGroup]="form" class="form">
+                  <mat-form-field appearance="outline" class="full-width">
+                    <mat-label>Name</mat-label>
+                    <input matInput formControlName="name" placeholder="Enter product name"/>
+                    @if (form.get('name')?.hasError('required') && form.get('name')?.touched) {
+                      <mat-error>Name is required</mat-error>
+                    }
+                  </mat-form-field>
 
-        <mat-form-field appearance="outline" class="full-width">
-          <mat-label>Original Price</mat-label>
-          <input matInput type="text" formControlName="originalPrice" placeholder="0.00"/>
-          @if (form.get('originalPrice')?.hasError('required') && form.get('originalPrice')?.touched) {
-            <mat-error>Original price is required</mat-error>
-          }
-        </mat-form-field>
+                  <div class="row">
+                    <div class="col">
+                      <mat-form-field appearance="outline" class="full-width">
+                        <mat-label>Original Price</mat-label>
+                        <input matInput type="text" formControlName="originalPrice" placeholder="0.00"/>
+                        @if (form.get('originalPrice')?.hasError('required') && form.get('originalPrice')?.touched) {
+                          <mat-error>Original price is required</mat-error>
+                        }
+                      </mat-form-field>
 
-        <mat-form-field appearance="outline" class="full-width">
-          <mat-label>Sale Price</mat-label>
-          <input matInput type="number" formControlName="salePrice" placeholder="0.00"/>
-        </mat-form-field>
+                    </div>
+                    <div class="col">
+                      <mat-form-field appearance="outline" class="full-width">
+                        <mat-label>Sale Price</mat-label>
+                        <input matInput type="number" formControlName="salePrice" placeholder="0.00"/>
+                      </mat-form-field>
+                    </div>
+                  </div>
 
-        <mat-form-field appearance="outline" class="full-width">
-          <mat-label>Localization</mat-label>
-          <mat-select formControlName="localizationId">
-            <mat-option value="">Select localization</mat-option>
-            @for (loc of localizations(); track loc.id) {
-              <mat-option [value]="loc.id">{{ loc.name }}</mat-option>
-            }
-          </mat-select>
-          @if (form.get('localizationId')?.hasError('required') && form.get('localizationId')?.touched) {
-            <mat-error>Localization is required</mat-error>
-          }
-        </mat-form-field>
+                  <mat-form-field appearance="outline" class="full-width">
+                    <mat-label>Localization</mat-label>
+                    <mat-select formControlName="localizationId">
+                      <mat-option value="">Select localization</mat-option>
+                      @for (loc of localizations(); track loc.id) {
+                        <mat-option [value]="loc.id">{{ loc.name }}</mat-option>
+                      }
+                    </mat-select>
+                    @if (form.get('localizationId')?.hasError('required') && form.get('localizationId')?.touched) {
+                      <mat-error>Localization is required</mat-error>
+                    }
+                  </mat-form-field>
 
-        <mat-form-field appearance="outline" class="full-width">
-          <mat-label>Product Type</mat-label>
-          <mat-select formControlName="productTypeId">
-            <mat-option value="">Select product type</mat-option>
-            @for (type of productTypes(); track type.id) {
-              <mat-option [value]="type.id">{{ type.name }}</mat-option>
-            }
-          </mat-select>
-          @if (form.get('productTypeId')?.hasError('required') && form.get('productTypeId')?.touched) {
-            <mat-error>Product type is required</mat-error>
-          }
-        </mat-form-field>
+                  <mat-form-field appearance="outline" class="full-width">
+                    <mat-label>Product Type</mat-label>
+                    <mat-select formControlName="productTypeId">
+                      <mat-option value="">Select product type</mat-option>
+                      @for (type of productTypes(); track type.id) {
+                        <mat-option [value]="type.id">{{ type.name }}</mat-option>
+                      }
+                    </mat-select>
+                    @if (form.get('productTypeId')?.hasError('required') && form.get('productTypeId')?.touched) {
+                      <mat-error>Product type is required</mat-error>
+                    }
+                  </mat-form-field>
 
-        <mat-form-field appearance="outline" class="full-width">
-          <mat-label>Quantity</mat-label>
-          <input matInput type="number" formControlName="quantity" min="1"/>
-          @if (form.get('quantity')?.hasError('required') && form.get('quantity')?.touched) {
-            <mat-error>Quantity is required</mat-error>
-          }
-          @if (form.get('quantity')?.hasError('min')) {
-            <mat-error>Quantity must be at least 1</mat-error>
-          }
-        </mat-form-field>
+                  <div class="row">
+                    <div class="col">
 
-        <mat-form-field appearance="outline" class="full-width">
-          <mat-label>Visibility</mat-label>
-          <mat-select formControlName="visibility">
-            @for (vis of visibilityOptions; track vis.value) {
-              <mat-option [value]="vis.value">{{ vis.label }}</mat-option>
-            }
-          </mat-select>
-        </mat-form-field>
+                      <mat-form-field appearance="outline" class="full-width">
+                        <mat-label>Quantity</mat-label>
+                        <input matInput type="number" formControlName="quantity" min="1"/>
+                        @if (form.get('quantity')?.hasError('required') && form.get('quantity')?.touched) {
+                          <mat-error>Quantity is required</mat-error>
+                        }
+                        @if (form.get('quantity')?.hasError('min')) {
+                          <mat-error>Quantity must be at least 1</mat-error>
+                        }
+                      </mat-form-field>
+                    </div>
+                    <div class="col">
 
-        <div class="py-5">
+                      <mat-form-field appearance="outline" class="full-width">
+                        <mat-label>Visibility</mat-label>
+                        <mat-select formControlName="visibility">
+                          @for (vis of visibilityOptions; track vis.value) {
+                            <mat-option [value]="vis.value">{{ vis.label }}</mat-option>
+                          }
+                        </mat-select>
+                      </mat-form-field>
+
+                    </div>
+                  </div>
+
+                </form>
+              </mat-card-content>
+            </mat-card>
+          </div>
+        </div>
+        <div class="col-6">
           <upload-file [viewUploaded]="viewUploaded" (uploaded)="onUpload($event)"></upload-file>
         </div>
-      </form>
+      </div>
     </form-component>
   `,
   styles: `
