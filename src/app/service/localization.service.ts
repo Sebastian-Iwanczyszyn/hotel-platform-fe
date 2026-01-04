@@ -24,6 +24,7 @@ export interface UpdateLocalizationDto {
 })
 export class LocalizationService implements GridDeletable {
   private readonly apiUrl = `${environment.API_URL}/admin/localizations`;
+  private readonly apiPublicUrl = `${environment.API_URL}/public`;
 
   constructor(private http: HttpClient) {}
 

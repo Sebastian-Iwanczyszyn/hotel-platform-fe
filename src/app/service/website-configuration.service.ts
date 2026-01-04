@@ -10,6 +10,11 @@ export interface WebsiteConfiguration {
   viewUploaded: ViewUploaded|null;
 }
 
+export interface PublicWebsiteConfiguration {
+  backgroundImageUrl: string;
+  configuration: { title: string, subTitle: string };
+}
+
 export interface UpdateWebsiteConfigurationDto {
   backgroundImageId: string;
   configuration: { title: string, subTitle: string };
@@ -20,8 +25,13 @@ export interface UpdateWebsiteConfigurationDto {
 })
 export class WebsiteConfigurationService {
   private readonly apiUrl = `${environment.API_URL}/admin/website-configurations`;
+  private readonly apiPublicUrl = `${environment.API_URL}/public`;
 
   constructor(private http: HttpClient) {
+  }
+
+  publicGetById(id: string): Observable<PublicWebsiteConfiguration> {
+    return this.http.get<PublicWebsiteConfiguration>(`${this.apiPublicUrl}/website/${id}`);
   }
 
   get(): Observable<WebsiteConfiguration> {

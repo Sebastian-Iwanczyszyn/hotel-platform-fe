@@ -1,4 +1,4 @@
-import { Routes } from '@angular/router';
+import {Routes} from '@angular/router';
 import {DashboardPage} from './page/dashboard.page';
 import {LocalizationPage} from './page/localization.page';
 import {ProductTypeForm} from './components/form/product-type.form';
@@ -9,85 +9,119 @@ import {PaymentPage} from './page/payment.page';
 import {DesignPage} from './page/design.page';
 import {LocalizationForm} from './components/form/localization.form';
 import {PaymentConfigurationPage} from './page/payment-configuration.page';
+import {PublicLocalizationPage} from './page/public/public-localization-page.component';
+import {PublicLayoutComponent} from './layout/public.layout';
+import {AdminLayout} from './layout/admin.layout';
+import {PublicProductSummaryPage} from './page/public/public-product-summary.page';
+import {PublicPaymentPage} from './page/public/public-payment.page';
+import {PublicPaymentProcessPage} from './page/public/public-payment-process.page';
 
 export const routes: Routes = [
   {
     path: 'admin',
-    component: DashboardPage,
-  },
-  {
-    path: 'admin/facility',
-    children: [
-      {
-        path: 'localizations',
-        component: LocalizationPage,
-      },
-      {
-        path: 'localizations/create',
-        component: LocalizationForm,
-      },
-      {
-        path: 'localizations/view/:id',
-        component: LocalizationForm,
-      },
-      {
-        path: 'products',
-        component: ProductPage,
-      },
-      {
-        path: 'products/view/:id',
-        component: ProductForm,
-      },
-      {
-        path: 'products/create',
-        component: ProductForm,
-      },
-      {
-        path: 'product-types',
-        component: ProductTypePage,
-      },
-      {
-        path: 'product-types/create',
-        component: ProductTypeForm,
-      },
-      {
-        path: 'product-types/view/:id',
-        component: ProductTypeForm,
-      },
-    ]
-  },
-  {
-    path: 'admin/payments',
+    component: AdminLayout,
     children: [
       {
         path: '',
-        component: PaymentPage,
+        component: DashboardPage,
       },
       {
-        path: 'configuration',
-        component: PaymentConfigurationPage,
+        path: 'facility',
+        children: [
+          {
+            path: 'localizations',
+            component: LocalizationPage,
+          },
+          {
+            path: 'localizations/create',
+            component: LocalizationForm,
+          },
+          {
+            path: 'localizations/view/:id',
+            component: LocalizationForm,
+          },
+          {
+            path: 'products',
+            component: ProductPage,
+          },
+          {
+            path: 'products/view/:id',
+            component: ProductForm,
+          },
+          {
+            path: 'products/create',
+            component: ProductForm,
+          },
+          {
+            path: 'product-types',
+            component: ProductTypePage,
+          },
+          {
+            path: 'product-types/create',
+            component: ProductTypeForm,
+          },
+          {
+            path: 'product-types/view/:id',
+            component: ProductTypeForm,
+          },
+        ],
       },
-    ]
+      {
+        path: 'payments',
+        children: [
+          {
+            path: '',
+            component: PaymentPage,
+          },
+          {
+            path: 'configuration',
+            component: PaymentConfigurationPage,
+          },
+        ],
+      },
+      {
+        path: 'account',
+        children: [
+          {
+            path: 'update-info',
+            component: PaymentConfigurationPage,
+          },
+          {
+            path: 'licenses',
+            component: PaymentConfigurationPage,
+          },
+          {
+            path: 'settings',
+            component: PaymentConfigurationPage,
+          },
+        ],
+      },
+      {
+        path: 'design-page',
+        component: DesignPage,
+      },
+    ],
   },
   {
-    path: 'admin/account',
+    path: 'app',
+    component: PublicLayoutComponent,
     children: [
       {
-        path: 'update-info',
-        component: PaymentConfigurationPage,
+        path: ':id',
+        component: PublicLocalizationPage,
       },
       {
-        path: 'licenses',
-        component: PaymentConfigurationPage,
+        path: 'view/:productId',
+        component: PublicProductSummaryPage,
       },
       {
-        path: 'settings',
-        component: PaymentConfigurationPage,
+        path: 'order/:bookingId',
+        component: PublicPaymentPage,
       },
-    ]
-  },
-  {
-    path: 'admin/design-page',
-    component: DesignPage,
+      {
+        path: 'process/payment/:bookingId/bank-transfer',
+        component: PublicPaymentProcessPage,
+      },
+    ],
   },
 ];

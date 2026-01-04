@@ -1,44 +1,15 @@
 import { Component } from '@angular/core';
-import { RouterOutlet } from '@angular/router';
-import {Menu} from './components/menu';
+import {RouterOutlet} from '@angular/router';
+import {BrowserModule} from '@angular/platform-browser';
+import {BrowserAnimationsModule} from '@angular/platform-browser/animations';
 
 @Component({
   selector: 'app-root',
   standalone: true,
-  imports: [RouterOutlet, Menu],
-  templateUrl: './app.html',
-  styles: `
-    :host {
-      display: block;
-      height: 100vh;
-      overflow: hidden;
-    }
-
-    .container-fluid {
-      height: 100vh;
-      padding: 0;
-      margin: 0;
-      overflow: hidden;
-    }
-
-    .row {
-      height: 100vh;
-      margin: 0;
-      overflow: hidden;
-    }
-
-    .col-auto {
-      height: 100vh;
-      overflow-y: auto;
-      overflow-x: hidden;
-    }
-
-    .col {
-      height: 100vh;
-      overflow-y: auto;
-      background: #f9fafb;
-      padding: 24px;
-    }
-  `
+  imports: [RouterOutlet],
+  template: `
+    <router-outlet />
+  `,
+  styles: ``
 })
 export class App {}
