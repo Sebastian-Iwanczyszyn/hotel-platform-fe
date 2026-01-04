@@ -251,6 +251,7 @@ export class Menu {
     },
     mainItems: [
       {icon: 'dashboard', label: 'Dashboard', path: ''},
+      {icon: 'grid_view', label: 'Rezerwacje', path: '/booking'},
       {
         icon: 'analytics',
         label: 'Produkty i lokalizacje',
@@ -304,7 +305,9 @@ export class Menu {
   }
 
   async logout(): Promise<void> {
-    await keycloak.logout();
+    await keycloak.logout({
+      redirectUri: window.location.origin
+    });
   }
 
   toggleItem(item: MenuItem): void {

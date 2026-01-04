@@ -15,6 +15,9 @@ import {AdminLayout} from './layout/admin.layout';
 import {PublicProductSummaryPage} from './page/public/public-product-summary.page';
 import {PublicPaymentPage} from './page/public/public-payment.page';
 import {PublicPaymentProcessPage} from './page/public/public-payment-process.page';
+import {authenticatedGuard} from './guard/authenticated-guard';
+import {NotFoundPage} from './page/not-found.page';
+import {BookingPage} from './page/booking.page';
 
 export const routes: Routes = [
   {
@@ -67,6 +70,15 @@ export const routes: Routes = [
         ],
       },
       {
+        path: 'booking',
+        children: [
+          {
+            path: '',
+            component: BookingPage,
+          },
+        ],
+      },
+      {
         path: 'payments',
         children: [
           {
@@ -101,6 +113,7 @@ export const routes: Routes = [
         component: DesignPage,
       },
     ],
+    canActivate: [authenticatedGuard]
   },
   {
     path: 'app',
@@ -123,5 +136,9 @@ export const routes: Routes = [
         component: PublicPaymentProcessPage,
       },
     ],
+  },
+  {
+    path: '**',
+    component: NotFoundPage,
   },
 ];

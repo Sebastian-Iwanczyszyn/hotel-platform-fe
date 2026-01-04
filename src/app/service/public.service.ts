@@ -3,6 +3,7 @@ import {HttpClient} from '@angular/common/http';
 import {Observable} from 'rxjs';
 import {environment} from '../../environments/environment';
 import {Product} from './product.service';
+import {Order} from '../model/payment-service';
 
 export interface PublicWebsiteConfiguration {
   backgroundImageUrl: string;
@@ -31,19 +32,6 @@ export interface AvailabilityDto {
   product: AvailabilityProduct;
   pricePerDay: PricePerDay[];
   total: string;
-}
-
-export interface Order {
-  id: string;
-  customerId: string;
-  bookingId: string;
-  bookingPublicId: string;
-  externalPaymentIdentifier: string | null;
-  name: string;
-  totalAmount: string;
-  state: string;
-  createdAt: string;
-  updatedAt: string;
 }
 
 export interface PersonInfo {

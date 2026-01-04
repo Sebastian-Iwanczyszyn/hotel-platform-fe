@@ -3,8 +3,9 @@ import {CommonModule} from '@angular/common';
 import {ActivatedRoute, Router} from '@angular/router';
 import {ReactiveFormsModule} from '@angular/forms';
 
-import {Booking, Order, PaymentMethod, PublicService} from '../../service/public.service';
+import {Booking, PaymentMethod, PublicService} from '../../service/public.service';
 import {MaterialModule} from '../../module/material.module';
+import {Order} from '../../model/payment-service';
 
 type PaymentProvider = { type: PaymentMethod };
 

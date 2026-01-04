@@ -13,7 +13,7 @@ import {PlDateAdapter} from './service/p1-date-adapter';
 function initKeycloak() {
   return () =>
     keycloak.init({
-      onLoad: 'login-required',
+      onLoad: 'check-sso',
       pkceMethod: 'S256',
       checkLoginIframe: false,
     });

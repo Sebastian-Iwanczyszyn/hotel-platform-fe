@@ -2,6 +2,8 @@ import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { Observable } from 'rxjs';
 import { environment } from '../../environments/environment';
+import {Order} from '../model/payment-service';
+import {Pagination} from '../components/generic-grid.';
 
 export enum PaymentProviderType {
   BANK_TRANSFER = 'BANK_TRANSFER',
@@ -52,6 +54,7 @@ export interface PayUConfiguration extends Configuration {
 export class PaymentService {
   // private readonly apiUrl = `${environment.API_URL}/admin/payment-providers`;
   private readonly apiUrl = `http://localhost:3001/api/admin/payment-providers`;
+  private readonly apiOrderUrl = `http://localhost:3001/api/admin/orders`;
 
   constructor(private http: HttpClient) {}
 
@@ -59,8 +62,8 @@ export class PaymentService {
     return this.http.post<PaymentProvider<T>>(this.apiUrl, dto);
   }
 
-  getAll(): Observable<PaymentProvider<any>[]> {
-    return this.http.get<PaymentProvider<any>[]>(this.apiUrl);
+  list(page: number = 1, limit: number = 25): Observable<Pagination<Order>> {
+    return this.http.get<Pagination<Order>>(`${this.apiOrderUrl}?page=${page}&limit=${limit}`);
   }
 
   getById<T>(id: string): Observable<PaymentProvider<T>> {
